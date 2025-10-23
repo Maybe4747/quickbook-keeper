@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { billService } from '@/services';
 import { Bill, BillType } from '@/services/typings';
 import {

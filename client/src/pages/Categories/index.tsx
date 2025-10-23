@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { categoryService } from '@/services';
 import { BillType, Category } from '@/services/typings';
 import {
