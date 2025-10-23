@@ -51,3 +51,11 @@ export interface StatsSummary {
   income: number; // 总收入
   balance: number; // 结余（收入-支出）
 }
+
+// 用户信息接口
+export interface UserInfo {
+  _id: string;
+  username: string;
+  token?: string;
+  login?: boolean;
+}

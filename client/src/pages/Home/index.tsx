@@ -1,4 +1,4 @@
-import { Bill, BillType } from '@/services/typings';
+import { Bill, BillType, StatsSummary } from '@/services/typings';
 import {
   AccountBookOutlined,
   ArrowDownOutlined,
@@ -8,16 +8,20 @@ import {
 import { PageContainer } from '@ant-design/pro-components';
 import { Alert, Button, Card, Col, Row, Spin, Statistic, Table } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { request } from '@/utils/request';
 import styles from './index.less';
+
+// 为状态变量定义类型
+type SummaryData = {
+  expense: number;
+  income: number;
+  balance: number;
+};
 
 const HomePage: React.FC = () => {
   // 状态变量
   const [loading, setLoading] = useState<boolean>(true);
-  const [summaryData, setSummaryData] = useState<{
-    expense: number;
-    income: number;
-    balance: number;
-  }>({
+  const [summaryData, setSummaryData] = useState<SummaryData>({
     expense: 0,
     income: 0,
     balance: 0,
@@ -34,8 +38,14 @@ const HomePage: React.FC = () => {
   const fetchSummaryData = async () => {
     setLoading(true);
     try {
-      // TODO: 在这里添加实际的API调用
-      console.log('获取统计摘要数据');
+      const response = await request('/api/bills/summary');
+      const data = await response.json();
+      
+      if (data.code === 0) {
+        setSummaryData(data.data);
+      } else {
+        console.error('获取账单统计摘要失败:', data.msg);
+      }
     } catch (error) {
       console.error('获取账单统计摘要失败:', error);
     } finally {
@@ -46,8 +56,14 @@ const HomePage: React.FC = () => {
   // 获取近期账单
   const fetchRecentBills = async () => {
     try {
-      // TODO: 在这里添加实际的API调用
-      console.log('获取近期账单数据');
+      const response = await request('/api/bills/recent');
+      const data = await response.json();
+      
+      if (data.code === 0) {
+        setRecentBills(data.data);
+      } else {
+        console.error('获取近期账单失败:', data.msg);
+      }
     } catch (error) {
       console.error('获取近期账单失败:', error);
     }

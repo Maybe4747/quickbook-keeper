@@ -7,14 +7,14 @@
     "format": "prettier --cache --write .",
     "postinstall": "max setup",
     "prepare": "husky",
-    "setup": "max setup",
-    "start": "npm run dev"
+    "setup": "max setup"
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
     "@ant-design/pro-components": "^2.4.4",
     "@umijs/max": "^4.5.3",
-    "antd": "^5.4.0"
+    "antd": "^5.4.0",
+    "dayjs": "^1.11.18"
   },
   "devDependencies": {
     "@types/react": "^18.0.33",

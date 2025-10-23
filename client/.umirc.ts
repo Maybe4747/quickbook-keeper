@@ -11,6 +11,20 @@ export default defineConfig({
   },
   routes: [
     {
+      name: '登录',
+      path: '/login',
+      component: './Login',
+      layout: false,
+      hideInMenu: true,
+    },
+    {
+      name: '注册',
+      path: '/register',
+      component: './Register',
+      layout: false,
+      hideInMenu: true,
+    },
+    {
       path: '/',
       redirect: '/home',
     },

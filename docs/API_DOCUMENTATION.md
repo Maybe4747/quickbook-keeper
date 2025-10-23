@@ -1,16 +1,21 @@
 # QuickBook Keeper API 接口文档
 
-## 基础URL
+## 基础 URL
+
 `http://localhost:5000/api`
 
 ## 身份验证
-所有受保护的路由都需要在Authorization头中提供Bearer令牌：
+
+所有受保护的路由都需要在 Authorization 头中提供 Bearer 令牌：
+
 ```
 Authorization: Bearer <token>
 ```
 
 ## 响应格式
-所有API响应都遵循以下格式：
+
+所有 API 响应都遵循以下格式：
+
 ```json
 {
   "code": 0,
@@ -20,6 +25,7 @@ Authorization: Bearer <token>
 ```
 
 错误响应：
+
 ```json
 {
   "code": -1,
@@ -33,17 +39,21 @@ Authorization: Bearer <token>
 ### 用户身份验证
 
 #### 注册用户
+
 - **POST** `/users/register`
 - **描述**: 注册新用户
 - **公共路由**
 - **请求体**:
+
 ```json
 {
   "username": "字符串 (必填, 3-30字符)",
   "password": "字符串 (必填, 最少6字符)"
 }
 ```
+
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -57,17 +67,21 @@ Authorization: Bearer <token>
 ```
 
 #### 用户登录
+
 - **POST** `/users/login`
 - **描述**: 验证用户并获取令牌
 - **公共路由**
 - **请求体**:
+
 ```json
 {
   "username": "字符串 (必填)",
   "password": "字符串 (必填)"
 }
 ```
+
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -81,10 +95,12 @@ Authorization: Bearer <token>
 ```
 
 #### 获取用户资料
+
 - **GET** `/users/profile`
 - **描述**: 获取登录用户的资料
 - **受保护路由**
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -97,17 +113,21 @@ Authorization: Bearer <token>
 ```
 
 #### 更新用户资料
+
 - **PUT** `/users/profile`
 - **描述**: 更新登录用户的资料
 - **受保护路由**
 - **请求体** (全部可选):
+
 ```json
 {
   "username": "字符串",
   "password": "字符串 (最少6字符)"
 }
 ```
+
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -123,18 +143,20 @@ Authorization: Bearer <token>
 ### 账单
 
 #### 获取所有账单
+
 - **GET** `/bills`
 - **描述**: 获取所有账单，支持分页和过滤
 - **受保护路由**
 - **查询参数**:
-  - `page`: 页码 (默认1)
-  - `limit`: 每页项目数 (默认10)
+  - `page`: 页码 (默认 1)
+  - `limit`: 每页项目数 (默认 10)
   - `type`: 账单类型 ('expense' 或 'income')
-  - `categoryId`: 按分类ID过滤
+  - `categoryId`: 按分类 ID 过滤
   - `startDate`: 开始日期 (格式: YYYY-MM-DD)
   - `endDate`: 结束日期 (格式: YYYY-MM-DD)
   - `keyword`: 在备注字段中搜索关键字
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -169,11 +191,13 @@ Authorization: Bearer <token>
 }
 ```
 
-#### 根据ID获取账单
+#### 根据 ID 获取账单
+
 - **GET** `/bills/:id`
-- **描述**: 根据ID获取特定账单
+- **描述**: 根据 ID 获取特定账单
 - **受保护路由**
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -191,10 +215,12 @@ Authorization: Bearer <token>
 ```
 
 #### 创建账单
+
 - **POST** `/bills`
 - **描述**: 创建新账单
 - **受保护路由**
 - **请求体**:
+
 ```json
 {
   "amount": "数字 (必填)",
@@ -204,7 +230,9 @@ Authorization: Bearer <token>
   "note": "字符串 (可选)"
 }
 ```
+
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -222,10 +250,12 @@ Authorization: Bearer <token>
 ```
 
 #### 更新账单
+
 - **PUT** `/bills/:id`
 - **描述**: 更新特定账单
 - **受保护路由**
 - **请求体**:
+
 ```json
 {
   "amount": "数字",
@@ -235,7 +265,9 @@ Authorization: Bearer <token>
   "note": "字符串"
 }
 ```
+
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -253,10 +285,12 @@ Authorization: Bearer <token>
 ```
 
 #### 删除账单
+
 - **DELETE** `/bills/:id`
 - **描述**: 删除特定账单
 - **受保护路由**
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -266,10 +300,12 @@ Authorization: Bearer <token>
 ```
 
 #### 获取账单摘要
+
 - **GET** `/bills/summary`
 - **描述**: 获取摘要统计信息（总收入、支出和余额）
 - **受保护路由**
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -283,12 +319,14 @@ Authorization: Bearer <token>
 ```
 
 #### 获取最近账单
+
 - **GET** `/bills/recent`
-- **描述**: 获取最近账单（默认5条）
+- **描述**: 获取最近账单（默认 5 条）
 - **受保护路由**
 - **查询参数**:
-  - `limit`: 要返回的账单数量（默认5）
+  - `limit`: 要返回的账单数量（默认 5）
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -315,10 +353,12 @@ Authorization: Bearer <token>
 ### 分类
 
 #### 获取所有分类
+
 - **GET** `/categories`
 - **描述**: 获取所有分类
 - **受保护路由**
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -334,11 +374,13 @@ Authorization: Bearer <token>
 }
 ```
 
-#### 根据ID获取分类
+#### 根据 ID 获取分类
+
 - **GET** `/categories/:id`
-- **描述**: 根据ID获取特定分类
+- **描述**: 根据 ID 获取特定分类
 - **受保护路由**
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -354,17 +396,21 @@ Authorization: Bearer <token>
 ```
 
 #### 创建分类
+
 - **POST** `/categories`
 - **描述**: 创建新分类
 - **受保护路由**
 - **请求体**:
+
 ```json
 {
   "name": "字符串 (必填)",
   "type": "字符串 (必填, expense/income)"
 }
 ```
+
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -379,17 +425,21 @@ Authorization: Bearer <token>
 ```
 
 #### 更新分类
+
 - **PUT** `/categories/:id`
 - **描述**: 更新特定分类
 - **受保护路由**
 - **请求体**:
+
 ```json
 {
   "name": "字符串",
   "type": "字符串 (expense/income)"
 }
 ```
+
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -404,10 +454,12 @@ Authorization: Bearer <token>
 ```
 
 #### 删除分类
+
 - **DELETE** `/categories/:id`
 - **描述**: 删除特定分类
 - **受保护路由**
 - **响应**:
+
 ```json
 {
   "code": 0,
@@ -419,6 +471,7 @@ Authorization: Bearer <token>
 ## 错误响应
 
 所有错误响应都遵循以下格式：
+
 ```json
 {
   "code": -1,
