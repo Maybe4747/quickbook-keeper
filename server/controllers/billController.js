@@ -10,6 +10,12 @@ const { successResponse, errorResponse } = require('../utils/responseFormatter')
 const getBills = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, type, categoryId, startDate, endDate, keyword } = req.query;
 
+  // Check if user exists
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error('User not authenticated');
+  }
+
   // Build filter object
   const filter = { userId: req.user._id };
 
@@ -32,7 +38,7 @@ const getBills = asyncHandler(async (req, res) => {
   }
 
   if (keyword) {
-    filter.note = { $regex: keyword, $options: 'i' };
+    filter.remark = { $regex: keyword, $options: 'i' };
   }
 
   // Calculate pagination
@@ -72,7 +78,7 @@ const getBills = asyncHandler(async (req, res) => {
           categoryId: bill.categoryId._id,
           category: bill.categoryId,
           date: bill.date,
-          note: bill.note,
+          remark: bill.remark,
           createdAt: bill.createdAt,
         })),
         pagination: {
@@ -115,7 +121,7 @@ const getBillById = asyncHandler(async (req, res) => {
         type: bill.type,
         categoryId: bill.categoryId._id,
         date: bill.date,
-        note: bill.note,
+        remark: bill.remark,
         createdAt: bill.createdAt,
       },
       '获取账单成功'
@@ -127,7 +133,7 @@ const getBillById = asyncHandler(async (req, res) => {
 // @route   POST /api/bills
 // @access  Private
 const createBill = asyncHandler(async (req, res) => {
-  const { amount, type, categoryId, date, note } = req.body;
+  const { amount, type, categoryId, date, remark } = req.body;
 
   // Validation
   if (!amount || !type || !categoryId || !date) {
@@ -164,7 +170,7 @@ const createBill = asyncHandler(async (req, res) => {
     type,
     categoryId: category._id, // Use the found category's ObjectId
     date,
-    note,
+    remark,
     userId: req.user._id,
   });
 
@@ -179,7 +185,7 @@ const createBill = asyncHandler(async (req, res) => {
         type: bill.type,
         categoryId: bill.categoryId._id,
         date: bill.date,
-        note: bill.note,
+        remark: bill.remark,
         createdAt: bill.createdAt,
       },
       '账单创建成功'
@@ -191,7 +197,7 @@ const createBill = asyncHandler(async (req, res) => {
 // @route   PUT /api/bills/:id
 // @access  Private
 const updateBill = asyncHandler(async (req, res) => {
-  const { amount, type, categoryId, date, note } = req.body;
+  const { amount, type, categoryId, date, remark } = req.body;
 
   let bill = await Bill.findById(req.params.id);
 
@@ -217,7 +223,7 @@ const updateBill = asyncHandler(async (req, res) => {
 
   bill = await Bill.findByIdAndUpdate(
     req.params.id,
-    { amount, type, categoryId, date, note },
+    { amount, type, categoryId, date, remark },
     { new: true, runValidators: true }
   ).populate('categoryId', 'name type');
 
@@ -229,7 +235,7 @@ const updateBill = asyncHandler(async (req, res) => {
         type: bill.type,
         categoryId: bill.categoryId._id,
         date: bill.date,
-        note: bill.note,
+        remark: bill.remark,
         createdAt: bill.createdAt,
       },
       '账单更新成功'
@@ -263,6 +269,12 @@ const deleteBill = asyncHandler(async (req, res) => {
 // @route   GET /api/bills/summary
 // @access  Private
 const getBillsSummary = asyncHandler(async (req, res) => {
+  // Check if user exists
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error('User not authenticated');
+  }
+
   const result = await Bill.aggregate([
     { $match: { userId: req.user._id } },
     {
@@ -295,6 +307,12 @@ const getBillsSummary = asyncHandler(async (req, res) => {
 const getRecentBills = asyncHandler(async (req, res) => {
   const { limit = 5 } = req.query;
 
+  // Check if user exists
+  if (!req.user || !req.user._id) {
+    res.status(401);
+    throw new Error('User not authenticated');
+  }
+
   const bills = await Bill.find({ userId: req.user._id })
     .populate('categoryId', 'name type')
     .sort({ date: -1, createdAt: -1 })
@@ -309,7 +327,7 @@ const getRecentBills = asyncHandler(async (req, res) => {
         categoryId: bill.categoryId._id,
         category: bill.categoryId,
         date: bill.date,
-        note: bill.note,
+        remark: bill.remark,
         createdAt: bill.createdAt,
       })),
       '获取最近账单成功'

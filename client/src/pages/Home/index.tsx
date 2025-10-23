@@ -117,13 +117,10 @@ const HomePage = () => {
     },
     {
       title: '分类',
-      dataIndex: 'categoryId',
-      key: 'categoryId',
+      dataIndex: 'category',
+      key: 'category',
       render: (category: any) => {
-        if (typeof category === 'string') {
-          return '未知分类';
-        }
-        return category?.name || '未知分类';
+        return category?.name || '-';
       },
     },
     {

@@ -103,9 +103,6 @@ const BillForm = () => {
 
   // 处理表单提交
   const handleSubmit = async (values: any) => {
-    console.log('表单提交的值:', values);
-    console.log('当前分类列表:', categories);
-    console.log('当前类型分类:', getCurrentTypeCategories());
 
     setSubmitLoading(true);
     try {
@@ -194,13 +191,11 @@ const BillForm = () => {
   // 获取当前类型的分类列表
   const getCurrentTypeCategories = () => {
     if (!categories || categories.length === 0) {
-      console.log('分类列表为空:', categories);
       return [];
     }
     const filtered = categories.filter(
       (category) => category.type === selectedType,
     );
-    console.log('当前类型分类:', selectedType, '过滤结果:', filtered);
     return filtered;
   };
 
@@ -220,8 +215,6 @@ const BillForm = () => {
           }}
           onFinish={handleSubmit}
           onFinishFailed={(errorInfo) => {
-            console.log('表单验证失败:', errorInfo);
-            console.log('当前表单值:', form.getFieldsValue());
           }}
         >
           <Form.Item
