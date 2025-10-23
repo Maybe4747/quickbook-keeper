@@ -1,121 +1,116 @@
+import { request } from '@/utils/request';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Form, Input, message, Row, Col } from 'antd';
-import React, { useState } from 'react';
-import { history, useModel } from '@umijs/max';
+import { history } from '@umijs/max';
+import { Button, Card, Form, Input, message, Space, Typography } from 'antd';
+import { useState } from 'react';
 import styles from './index.less';
 
-interface LoginParams {
+const { Title, Link } = Typography;
+
+interface LoginForm {
   username: string;
   password: string;
 }
 
-const LoginPage: React.FC = () => {
+export default function Login() {
+  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const { setInitialState } = useModel('@@initialState');
 
-  const handleSubmit = async (values: LoginParams) => {
-    const { username, password } = values;
+  const onFinish = async (values: LoginForm) => {
     setLoading(true);
-
     try {
-      // 调用登录API
-      const response = await fetch('/api/users/login', {
+      const response = await request('http://localhost:5000/api/users/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          password,
-        }),
+        body: JSON.stringify(values),
       });
 
       const data = await response.json();
 
       if (data.code === 0) {
-        // 登录成功，保存token到localStorage
-        const { token, _id, username: userName } = data.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('userId', _id);
-        localStorage.setItem('username', userName);
+        // 登录成功
+        localStorage.setItem('token', data.data.token);
+        localStorage.setItem('userId', data.data._id);
+        localStorage.setItem('username', data.data.username);
 
-        // 更新全局状态
-        setInitialState({
-          userId: _id,
-          username: userName,
-          token,
-          login: true,
-        });
-
-        message.success('登录成功');
-        // 跳转到首页
+        message.success('登录成功！');
         history.push('/home');
       } else {
         message.error(data.msg || '登录失败');
       }
     } catch (error) {
       console.error('登录失败:', error);
-      message.error('登录失败，请检查网络连接');
+      message.error('网络错误，请稍后重试');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleRegisterClick = () => {
+    history.push('/register');
+  };
+
   return (
-    <div className={styles.container}>
-      <Row justify="center" align="middle" style={{ minHeight: '100vh' }}>
-        <Col xs={20} sm={16} md={12} lg={10} xl={8}>
-          <Card title="用户登录" className={styles.loginCard}>
-            <Form
-              name="login"
-              initialValues={{ remember: true }}
-              onFinish={handleSubmit}
-              autoComplete="off"
+    <div className={styles.loginContainer}>
+      <Card className={styles.loginCard}>
+        <div className={styles.loginHeader}>
+          <Title level={2}>随手记账</Title>
+          <p className={styles.loginSubtitle}>欢迎回来，请登录您的账户</p>
+        </div>
+
+        <Form
+          form={form}
+          name="login"
+          size="large"
+          onFinish={onFinish}
+          autoComplete="off"
+        >
+          <Form.Item
+            name="username"
+            rules={[
+              { required: true, message: '请输入用户名!' },
+              { min: 3, message: '用户名至少3个字符!' },
+              { max: 30, message: '用户名不能超过30个字符!' },
+            ]}
+          >
+            <Input
+              prefix={<UserOutlined className={styles.siteFormItemIcon}
+               />}
+              placeholder="用户名"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="password"
+            rules={[
+              { required: true, message: '请输入密码!' },
+              { min: 6, message: '密码至少6个字符!' },
+            ]}
+          >
+            <Input.Password
+              prefix={<LockOutlined className={styles.siteFormItemIcon} />}
+              placeholder="密码"
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className={styles.loginButton}
+              loading={loading}
             >
-              <Form.Item
-                name="username"
-                rules={[{ required: true, message: '请输入用户名!' }]}
-              >
-                <Input
-                  prefix={<UserOutlined className={styles.prefixIcon} />}
-                  placeholder="用户名"
-                />
-              </Form.Item>
+              登录
+            </Button>
+          </Form.Item>
+        </Form>
 
-              <Form.Item
-                name="password"
-                rules={[{ required: true, message: '请输入密码!' }]}
-              >
-                <Input.Password
-                  prefix={<LockOutlined className={styles.prefixIcon} />}
-                  type="password"
-                  placeholder="密码"
-                />
-              </Form.Item>
-
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  block
-                  loading={loading}
-                  className={styles.loginButton}
-                >
-                  登录
-                </Button>
-              </Form.Item>
-
-              <Form.Item>
-                <div className={styles.registerLink}>
-                  还没有账户？ <a href="/register">立即注册</a>
-                </div>
-              </Form.Item>
-            </Form>
-          </Card>
-        </Col>
-      </Row>
+        <div className={styles.loginFooter}>
+          <Space>
+            <span>还没有账户？</span>
+            <Link onClick={handleRegisterClick}>立即注册</Link>
+          </Space>
+        </div>
+      </Card>
     </div>
   );
-};
-
-export default LoginPage;
+}
