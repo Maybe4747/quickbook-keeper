@@ -3,26 +3,26 @@ import { userService } from '@/services';
 import { UserInfo } from '@/services/typings';
 import { UpdateProfileParams } from '@/services/userService';
 import {
-  UserOutlined,
-  EditOutlined,
-  SaveOutlined,
   CloseOutlined,
+  EditOutlined,
   LockOutlined,
+  SaveOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { history } from '@umijs/max';
 import {
+  Avatar,
+  Button,
   Card,
+  Col,
+  Divider,
   Form,
   Input,
-  Button,
   message,
-  Space,
-  Avatar,
-  Typography,
-  Divider,
-  Row,
-  Col,
   Modal,
+  Row,
+  Space,
+  Typography,
 } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
@@ -33,7 +33,8 @@ const UserProfile = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [editMode, setEditMode] = useState<boolean>(false);
-  const [passwordModalVisible, setPasswordModalVisible] = useState<boolean>(false);
+  const [passwordModalVisible, setPasswordModalVisible] =
+    useState<boolean>(false);
   const [form] = Form.useForm();
   const [passwordForm] = Form.useForm();
 
@@ -157,7 +158,7 @@ const UserProfile = () => {
               </Title>
             </div>
           </Col>
-          
+
           <Col xs={24} sm={16} md={18}>
             <div className={styles.infoSection}>
               <div className={styles.sectionHeader}>
@@ -215,7 +216,11 @@ const UserProfile = () => {
 
               <div className={styles.actionSection}>
                 <Title level={4}>安全设置</Title>
-                <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                <Space
+                  direction="vertical"
+                  size="middle"
+                  style={{ width: '100%' }}
+                >
                   <div className={styles.actionItem}>
                     <div>
                       <Text strong>修改密码</Text>
@@ -229,7 +234,7 @@ const UserProfile = () => {
                       修改密码
                     </Button>
                   </div>
-                  
+
                   <div className={styles.actionItem}>
                     <div>
                       <Text strong>退出登录</Text>

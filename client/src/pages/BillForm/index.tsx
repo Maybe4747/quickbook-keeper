@@ -103,6 +103,10 @@ const BillForm = () => {
 
   // 处理表单提交
   const handleSubmit = async (values: any) => {
+    console.log('表单提交的值:', values);
+    console.log('当前分类列表:', categories);
+    console.log('当前类型分类:', getCurrentTypeCategories());
+
     setSubmitLoading(true);
     try {
       const formattedValues = {
@@ -141,7 +145,8 @@ const BillForm = () => {
   // 处理账单类型变更
   const handleTypeChange = (value: BillType) => {
     setSelectedType(value);
-    form.setFieldsValue({ categoryId: undefined }); // 清空已选的分类
+    form.setFieldsValue({ categoryId: null }); // 清空已选的分类
+    form.validateFields(['categoryId']); // 重新验证分类字段
   };
 
   // 返回列表页
@@ -165,10 +170,15 @@ const BillForm = () => {
 
       if (response.code === 0) {
         message.success('分类添加成功');
+        const newCategory = response.data;
         setNewCategoryName('');
         setShowAddCategory(false);
         // 重新获取分类列表
         await fetchCategories();
+        // 自动选中新创建的分类
+        if (newCategory && newCategory._id) {
+          form.setFieldsValue({ categoryId: newCategory._id });
+        }
       } else {
         console.error('添加分类失败:', response.msg);
         message.error(response.msg || '添加分类失败');
@@ -184,9 +194,14 @@ const BillForm = () => {
   // 获取当前类型的分类列表
   const getCurrentTypeCategories = () => {
     if (!categories || categories.length === 0) {
+      console.log('分类列表为空:', categories);
       return [];
     }
-    return categories.filter((category) => category.type === selectedType);
+    const filtered = categories.filter(
+      (category) => category.type === selectedType,
+    );
+    console.log('当前类型分类:', selectedType, '过滤结果:', filtered);
+    return filtered;
   };
 
   return (
@@ -204,6 +219,10 @@ const BillForm = () => {
             date: dayjs(), // 使用 day.js 初始化日期
           }}
           onFinish={handleSubmit}
+          onFinishFailed={(errorInfo) => {
+            console.log('表单验证失败:', errorInfo);
+            console.log('当前表单值:', form.getFieldsValue());
+          }}
         >
           <Form.Item
             name="type"
@@ -233,12 +252,8 @@ const BillForm = () => {
               prefix={selectedType === BillType.EXPENSE ? '-' : '+'}
             />
           </Form.Item>
-          <Form.Item
-            name="categoryId"
-            label="分类"
-            rules={[{ required: true, message: '请选择分类' }]}
-          >
-            {showAddCategory ? (
+          {showAddCategory ? (
+            <Form.Item label="新增分类" required>
               <Space.Compact style={{ width: '100%' }}>
                 <Input
                   placeholder="请输入新分类名称"
@@ -261,25 +276,34 @@ const BillForm = () => {
                   取消
                 </Button>
               </Space.Compact>
-            ) : (
-              <Space.Compact style={{ width: '100%' }}>
+            </Form.Item>
+          ) : (
+            <>
+              <Form.Item
+                name="categoryId"
+                label="分类"
+                rules={[{ required: true, message: '请选择分类' }]}
+              >
                 <Select
-                  style={{ width: '85%' }}
                   placeholder="请选择分类"
+                  allowClear
                   options={getCurrentTypeCategories().map((category) => ({
                     label: category.name,
                     value: category._id,
                   }))}
                 />
+              </Form.Item>
+              <Form.Item>
                 <Button
                   onClick={() => setShowAddCategory(true)}
                   icon={<PlusOutlined />}
+                  style={{ marginTop: -8 }}
                 >
-                  新增
+                  新增分类
                 </Button>
-              </Space.Compact>
-            )}
-          </Form.Item>
+              </Form.Item>
+            </>
+          )}
 
           <Form.Item
             name="date"

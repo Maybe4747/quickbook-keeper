@@ -1,9 +1,8 @@
 // @ts-nocheck
 import { billService, categoryService } from '@/services';
 import { Bill, BillType, Category, Pagination } from '@/services/typings';
+import { Line } from '@ant-design/charts';
 import {
-  ArrowDownOutlined,
-  ArrowUpOutlined,
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
@@ -23,10 +22,10 @@ import {
   Row,
   Select,
   Space,
-  Statistic,
   Table,
   Tag,
 } from 'antd';
+import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
 // 引入样式
 import './index.less';
@@ -53,8 +52,7 @@ const BillList = () => {
     pageSize: 10,
   });
   const [form] = Form.useForm();
-  const [totalIncome, setTotalIncome] = useState<number>(0);
-  const [totalExpense, setTotalExpense] = useState<number>(0);
+  const [chartData, setChartData] = useState<any[]>([]);
 
   // 初始化加载
   useEffect(() => {
@@ -89,13 +87,17 @@ const BillList = () => {
       const response = await billService.getBills(queryParams);
 
       if (response.code === 0) {
-        setBills(response.data.list);
+        const billList = response.data.list;
+        setBills(billList);
         setPagination({
           ...pagination,
           total: response.data.pagination.total,
           current: response.data.pagination.current,
           pageSize: response.data.pagination.pageSize,
         });
+
+        // 计算统计数据和图表数据
+        processChartData(billList);
       } else {
         console.error('获取账单列表失败:', response.msg);
         message.error('获取账单列表失败');
@@ -106,6 +108,34 @@ const BillList = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // 处理图表数据
+  const processChartData = (billList: Bill[]) => {
+    // 按日期分组统计数据，生成折线图数据
+    const dailyStats = billList.reduce((acc, bill) => {
+      const date = dayjs(bill.date).format('YYYY-MM-DD');
+      if (!acc[date]) {
+        acc[date] = { date, income: 0, expense: 0 };
+      }
+      if (bill.type === BillType.INCOME) {
+        acc[date].income += bill.amount;
+      } else {
+        acc[date].expense += bill.amount;
+      }
+      return acc;
+    }, {} as Record<string, { date: string; income: number; expense: number }>);
+
+    // 转换为图表数据格式
+    const chartData = Object.values(dailyStats)
+      .sort((a, b) => a.date.localeCompare(b.date))
+      .flatMap((item) => [
+        { date: item.date, type: '收入', value: item.income },
+        { date: item.date, type: '支出', value: item.expense },
+        { date: item.date, type: '结余', value: item.income - item.expense },
+      ]);
+
+    setChartData(chartData);
   };
 
   // 筛选查询
@@ -351,46 +381,39 @@ const BillList = () => {
           </Row>
         </Form>
 
-        <Row gutter={16} style={{ marginBottom: 16 }}>
-          <Col xs={24} sm={8}>
-            <Card>
-              <Statistic
-                title="当前页收入"
-                value={totalIncome}
-                precision={2}
-                valueStyle={{ color: '#3f8600' }}
-                prefix="¥"
-                suffix={<ArrowUpOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col xs={24} sm={8}>
-            <Card>
-              <Statistic
-                title="当前页支出"
-                value={totalExpense}
-                precision={2}
-                valueStyle={{ color: '#cf1322' }}
-                prefix="¥"
-                suffix={<ArrowDownOutlined />}
-              />
-            </Card>
-          </Col>
-          <Col xs={24} sm={8}>
-            <Card>
-              <Statistic
-                title="当前页结余"
-                value={totalIncome - totalExpense}
-                precision={2}
-                valueStyle={{
-                  color:
-                    totalIncome - totalExpense >= 0 ? '#3f8600' : '#cf1322',
-                }}
-                prefix="¥"
-              />
-            </Card>
-          </Col>
-        </Row>
+        <Card title="收支趋势图" style={{ marginBottom: 0 }}>
+          <div style={{ height: 200 }}>
+            <Line
+              data={chartData}
+              xField="date"
+              yField="value"
+              seriesField="type"
+              color={['#52c41a', '#ff4d4f', '#1890ff']}
+              smooth={true}
+              point={{
+                size: 4,
+                shape: 'diamond',
+              }}
+              tooltip={{
+                formatter: (datum) => {
+                  return {
+                    name: datum.type,
+                    value: `¥${datum.value.toFixed(2)}`,
+                  };
+                },
+              }}
+              yAxis={{
+                label: {
+                  formatter: (value) => `¥${value}`,
+                },
+              }}
+              legend={{
+                position: 'top',
+              }}
+              height={200}
+            />
+          </div>
+        </Card>
 
         <Table
           rowKey="_id"
