@@ -58,6 +58,12 @@ export default defineConfig({
       component: './Categories',
       icon: 'appstore',
     },
+    {
+      name: '个人中心',
+      path: '/profile',
+      component: './UserProfile',
+      icon: 'user',
+    },
   ],
   npmClient: 'pnpm',
 });
