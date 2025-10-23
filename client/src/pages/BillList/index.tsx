@@ -1,3 +1,4 @@
+import { billService, categoryService } from '@/services';
 import { Bill, BillType, Category, Pagination } from '@/services/typings';
 import {
   ArrowDownOutlined,
@@ -40,7 +41,7 @@ interface TableColumn {
   render?: (text: any, record: Bill) => React.ReactNode;
 }
 
-const BillList: React.FC = () => {
+const BillList = () => {
   // 状态变量
   const [bills, setBills] = useState<Bill[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -63,19 +64,41 @@ const BillList: React.FC = () => {
   // 获取分类列表
   const fetchCategories = async () => {
     try {
-      // TODO: 在这里添加实际的API调用
-      console.log('获取分类列表');
+      const response = await categoryService.getCategories();
+      if (response.code === 0) {
+        setCategories(response.data);
+      } else {
+        console.error('获取分类列表失败:', response.msg);
+      }
     } catch (error) {
       console.error('获取分类列表失败:', error);
     }
   };
 
   // 获取账单列表
-  const fetchBills = async (filters = {}) => {
+  const fetchBills = async (filters: any = {}) => {
     setLoading(true);
     try {
-      // TODO: 在这里添加实际的API调用
-      console.log('获取账单列表', filters);
+      const queryParams = {
+        page: pagination.current,
+        limit: pagination.pageSize,
+        ...filters,
+      };
+
+      const response = await billService.getBills(queryParams);
+
+      if (response.code === 0) {
+        setBills(response.data.list);
+        setPagination({
+          ...pagination,
+          total: response.data.pagination.total,
+          current: response.data.pagination.current,
+          pageSize: response.data.pagination.pageSize,
+        });
+      } else {
+        console.error('获取账单列表失败:', response.msg);
+        message.error('获取账单列表失败');
+      }
     } catch (error) {
       console.error('获取账单列表失败:', error);
       message.error('获取账单列表失败');
@@ -153,9 +176,16 @@ const BillList: React.FC = () => {
   // 删除账单
   const handleDeleteBill = async (id: string) => {
     try {
-      // TODO: 在这里添加实际的删除API调用
-      console.log('删除账单:', id);
-      message.success('账单删除成功');
+      const response = await billService.deleteBill(id);
+
+      if (response.code === 0) {
+        message.success('账单删除成功');
+        // 重新获取账单列表
+        fetchBills();
+      } else {
+        console.error('删除账单失败:', response.msg);
+        message.error('删除账单失败');
+      }
     } catch (error) {
       console.error('删除账单失败:', error);
       message.error('删除账单失败');

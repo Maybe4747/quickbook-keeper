@@ -1,3 +1,4 @@
+import { categoryService } from '@/services';
 import { BillType, Category } from '@/services/typings';
 import {
   DeleteOutlined,
@@ -19,11 +20,11 @@ import {
   Tabs,
   Tag,
 } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const { TabPane } = Tabs;
 
-const Categories: React.FC = () => {
+const Categories = () => {
   // 状态变量
   const [loading, setLoading] = useState<boolean>(false);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -43,8 +44,13 @@ const Categories: React.FC = () => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      // TODO: 在这里添加实际的API调用
-      console.log('获取分类列表');
+      const response = await categoryService.getCategories();
+      if (response.code === 0) {
+        setCategories(response.data);
+      } else {
+        console.error('获取分类列表失败:', response.msg);
+        message.error('获取分类列表失败');
+      }
     } catch (error) {
       console.error('获取分类列表失败:', error);
       message.error('获取分类列表失败');
@@ -77,9 +83,15 @@ const Categories: React.FC = () => {
   // 处理删除分类
   const handleDelete = async (id: string) => {
     try {
-      // TODO: 在这里添加实际的删除API调用
-      console.log('删除分类:', id);
-      message.success('分类删除成功');
+      const response = await categoryService.deleteCategory(id);
+      if (response.code === 0) {
+        message.success('分类删除成功');
+        // 重新获取分类列表
+        fetchCategories();
+      } else {
+        console.error('删除分类失败:', response.msg);
+        message.error(response.msg || '删除分类失败');
+      }
     } catch (error) {
       console.error('删除分类失败:', error);
       message.error('删除分类失败');
@@ -91,19 +103,30 @@ const Categories: React.FC = () => {
     try {
       const values = await form.validateFields();
 
+      let response;
       if (modalType === 'create') {
-        // TODO: 在这里添加创建分类的API调用
-        console.log('创建分类:', values);
-        message.success('分类创建成功');
-        setModalVisible(false);
+        response = await categoryService.createCategory(values);
       } else if (modalType === 'edit' && editingCategory) {
-        // TODO: 在这里添加更新分类的API调用
-        console.log('更新分类:', editingCategory._id, values);
-        message.success('分类更新成功');
+        response = await categoryService.updateCategory(
+          editingCategory._id!,
+          values,
+        );
+      }
+
+      if (response && response.code === 0) {
+        message.success(
+          modalType === 'create' ? '分类创建成功' : '分类更新成功',
+        );
         setModalVisible(false);
+        // 重新获取分类列表
+        fetchCategories();
+      } else {
+        console.error('表单提交失败:', response?.msg);
+        message.error(response?.msg || '操作失败');
       }
     } catch (error) {
       console.error('表单提交失败:', error);
+      message.error('操作失败');
     }
   };
 

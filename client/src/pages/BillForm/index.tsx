@@ -1,3 +1,4 @@
+import { billService, categoryService } from '@/services';
 import { BillType, Category } from '@/services/typings';
 import {
   CloseOutlined,
@@ -20,9 +21,9 @@ import {
   Space,
 } from 'antd';
 import dayjs from 'dayjs';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-const BillForm: React.FC = () => {
+const BillForm = () => {
   // 状态变量
   const [form] = Form.useForm();
   const [loading, setLoading] = useState<boolean>(false);
@@ -58,8 +59,13 @@ const BillForm: React.FC = () => {
   // 获取分类列表
   const fetchCategories = async () => {
     try {
-      // TODO: 在这里添加实际的API调用
-      console.log('获取分类列表');
+      const response = await categoryService.getCategories();
+      if (response.code === 0) {
+        setCategories(response.data);
+      } else {
+        console.error('获取分类列表失败:', response.msg);
+        message.error('获取分类列表失败');
+      }
     } catch (error) {
       console.error('获取分类列表失败:', error);
       message.error('获取分类列表失败');
@@ -70,8 +76,22 @@ const BillForm: React.FC = () => {
   const fetchBillDetail = async (billId: string) => {
     setLoading(true);
     try {
-      // TODO: 在这里添加实际的API调用
-      console.log('获取账单详情', billId);
+      const response = await billService.getBillById(billId);
+      if (response.code === 0) {
+        const billData = response.data;
+        // 设置表单数据
+        form.setFieldsValue({
+          amount: billData.amount,
+          type: billData.type,
+          categoryId: billData.categoryId,
+          date: dayjs(billData.date),
+          note: billData.note,
+        });
+        setSelectedType(billData.type);
+      } else {
+        console.error('获取账单详情失败:', response.msg);
+        message.error('获取账单详情失败');
+      }
     } catch (error) {
       console.error('获取账单详情失败:', error);
       message.error('获取账单详情失败');
@@ -88,16 +108,27 @@ const BillForm: React.FC = () => {
         ...values,
         date: values.date
           ? dayjs(values.date).toISOString()
-          : dayjs().toISOString(), // 确保使用 day.js
+          : dayjs().toISOString(),
       };
 
-      // TODO: 在这里添加实际的API调用来保存账单
-      console.log(isEdit ? '更新账单:' : '创建账单:', formattedValues);
+      let response;
+      if (isEdit && id) {
+        // 更新账单
+        response = await billService.updateBill(id, formattedValues);
+      } else {
+        // 创建账单
+        response = await billService.createBill(formattedValues);
+      }
 
-      // 模拟成功操作
-      message.success(isEdit ? '账单更新成功' : '账单创建成功');
-      // TODO: 添加页面跳转逻辑
-      // history.push('/bills'); // 返回账单列表页
+      if (response.code === 0) {
+        message.success(isEdit ? '账单更新成功' : '账单创建成功');
+        history.push('/bill-list'); // 返回账单列表页
+      } else {
+        console.error(isEdit ? '更新账单失败:' : '创建账单失败:', response.msg);
+        message.error(
+          response.msg || (isEdit ? '更新账单失败' : '创建账单失败'),
+        );
+      }
     } catch (error) {
       console.error(isEdit ? '更新账单失败:' : '创建账单失败:', error);
       message.error(isEdit ? '更新账单失败' : '创建账单失败');
@@ -126,19 +157,21 @@ const BillForm: React.FC = () => {
 
     setAddingCategory(true);
     try {
-      // TODO: 在这里添加实际的API调用来创建分类
-      console.log('创建分类:', {
+      const response = await categoryService.createCategory({
         name: newCategoryName.trim(),
         type: selectedType,
       });
 
-      // 模拟成功操作
-      message.success('分类添加成功');
-      setNewCategoryName('');
-      setShowAddCategory(false);
-
-      // TODO: 重新获取分类列表
-      await fetchCategories();
+      if (response.code === 0) {
+        message.success('分类添加成功');
+        setNewCategoryName('');
+        setShowAddCategory(false);
+        // 重新获取分类列表
+        await fetchCategories();
+      } else {
+        console.error('添加分类失败:', response.msg);
+        message.error(response.msg || '添加分类失败');
+      }
     } catch (error) {
       console.error('添加分类失败:', error);
       message.error('添加分类失败');

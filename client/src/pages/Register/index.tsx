@@ -1,4 +1,4 @@
-import { request } from '@/utils/request';
+import { userService } from '@/services';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { history } from '@umijs/max';
 import { Button, Card, Form, Input, message, Space, Typography } from 'antd';
@@ -21,26 +21,18 @@ export default function Register() {
     setLoading(true);
     try {
       const { username, password } = values;
-      const response = await request(
-        'http://localhost:5000/api/users/register',
-        {
-          method: 'POST',
-          body: JSON.stringify({ username, password }),
-        },
-      );
+      const response = await userService.register({ username, password });
 
-      const data = await response.json();
-
-      if (data.code === 0) {
+      if (response.code === 0) {
         // 注册成功，自动登录
-        localStorage.setItem('token', data.data.token);
-        localStorage.setItem('userId', data.data._id);
-        localStorage.setItem('username', data.data.username);
+        localStorage.setItem('token', response.data.token!);
+        localStorage.setItem('userId', response.data._id);
+        localStorage.setItem('username', response.data.username);
 
         message.success('注册成功！');
         history.push('/home');
       } else {
-        message.error(data.msg || '注册失败');
+        message.error(response.msg || '注册失败');
       }
     } catch (error) {
       console.error('注册失败:', error);

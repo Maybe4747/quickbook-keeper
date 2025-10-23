@@ -1,4 +1,5 @@
-import { Bill, BillType, StatsSummary } from '@/services/typings';
+import { billService } from '@/services';
+import { Bill, BillType } from '@/services/typings';
 import {
   AccountBookOutlined,
   ArrowDownOutlined,
@@ -7,8 +8,7 @@ import {
 } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-components';
 import { Alert, Button, Card, Col, Row, Spin, Statistic, Table } from 'antd';
-import React, { useEffect, useState } from 'react';
-import { request } from '@/utils/request';
+import { useEffect, useState } from 'react';
 import styles from './index.less';
 
 // 为状态变量定义类型
@@ -18,7 +18,7 @@ type SummaryData = {
   balance: number;
 };
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
   // 状态变量
   const [loading, setLoading] = useState<boolean>(true);
   const [summaryData, setSummaryData] = useState<SummaryData>({
@@ -38,13 +38,12 @@ const HomePage: React.FC = () => {
   const fetchSummaryData = async () => {
     setLoading(true);
     try {
-      const response = await request('/api/bills/summary');
-      const data = await response.json();
-      
-      if (data.code === 0) {
-        setSummaryData(data.data);
+      const response = await billService.getBillSummary();
+
+      if (response.code === 0) {
+        setSummaryData(response.data);
       } else {
-        console.error('获取账单统计摘要失败:', data.msg);
+        console.error('获取账单统计摘要失败:', response.msg);
       }
     } catch (error) {
       console.error('获取账单统计摘要失败:', error);
@@ -56,13 +55,12 @@ const HomePage: React.FC = () => {
   // 获取近期账单
   const fetchRecentBills = async () => {
     try {
-      const response = await request('/api/bills/recent');
-      const data = await response.json();
-      
-      if (data.code === 0) {
-        setRecentBills(data.data);
+      const response = await billService.getRecentBills(5);
+
+      if (response.code === 0) {
+        setRecentBills(response.data);
       } else {
-        console.error('获取近期账单失败:', data.msg);
+        console.error('获取近期账单失败:', response.msg);
       }
     } catch (error) {
       console.error('获取近期账单失败:', error);

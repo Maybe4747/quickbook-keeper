@@ -1,4 +1,4 @@
-import { request } from '@/utils/request';
+import { userService } from '@/services';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { history } from '@umijs/max';
 import { Button, Card, Form, Input, message, Space, Typography } from 'antd';
@@ -19,23 +19,18 @@ export default function Login() {
   const onFinish = async (values: LoginForm) => {
     setLoading(true);
     try {
-      const response = await request('http://localhost:5000/api/users/login', {
-        method: 'POST',
-        body: JSON.stringify(values),
-      });
+      const response = await userService.login(values);
 
-      const data = await response.json();
-
-      if (data.code === 0) {
+      if (response.code === 0) {
         // 登录成功
-        localStorage.setItem('token', data.data.token);
-        localStorage.setItem('userId', data.data._id);
-        localStorage.setItem('username', data.data.username);
+        localStorage.setItem('token', response.data.token!);
+        localStorage.setItem('userId', response.data._id);
+        localStorage.setItem('username', response.data.username);
 
         message.success('登录成功！');
         history.push('/home');
       } else {
-        message.error(data.msg || '登录失败');
+        message.error(response.msg || '登录失败');
       }
     } catch (error) {
       console.error('登录失败:', error);
@@ -73,8 +68,7 @@ export default function Login() {
             ]}
           >
             <Input
-              prefix={<UserOutlined className={styles.siteFormItemIcon}
-               />}
+              prefix={<UserOutlined className={styles.siteFormItemIcon} />}
               placeholder="用户名"
             />
           </Form.Item>
