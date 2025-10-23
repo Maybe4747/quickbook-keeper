@@ -233,55 +233,52 @@ const BillForm = () => {
               prefix={selectedType === BillType.EXPENSE ? '-' : '+'}
             />
           </Form.Item>
-
           <Form.Item
             name="categoryId"
             label="分类"
             rules={[{ required: true, message: '请选择分类' }]}
           >
-            <div>
-              {showAddCategory ? (
-                <Space.Compact style={{ width: '100%' }}>
-                  <Input
-                    placeholder="请输入新分类名称"
-                    value={newCategoryName}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
-                    disabled={addingCategory}
-                  />
-                  <Button
-                    type="primary"
-                    onClick={handleAddCategory}
-                    loading={addingCategory}
-                    icon={<SaveOutlined />}
-                  >
-                    保存
-                  </Button>
-                  <Button
-                    onClick={() => setShowAddCategory(false)}
-                    icon={<CloseOutlined />}
-                  >
-                    取消
-                  </Button>
-                </Space.Compact>
-              ) : (
-                <Space.Compact style={{ width: '100%' }}>
-                  <Select
-                    style={{ width: '85%' }}
-                    placeholder="请选择分类"
-                    options={getCurrentTypeCategories().map((category) => ({
-                      label: category.name,
-                      value: category._id,
-                    }))}
-                  />
-                  <Button
-                    onClick={() => setShowAddCategory(true)}
-                    icon={<PlusOutlined />}
-                  >
-                    新增
-                  </Button>
-                </Space.Compact>
-              )}
-            </div>
+            {showAddCategory ? (
+              <Space.Compact style={{ width: '100%' }}>
+                <Input
+                  placeholder="请输入新分类名称"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  disabled={addingCategory}
+                />
+                <Button
+                  type="primary"
+                  onClick={handleAddCategory}
+                  loading={addingCategory}
+                  icon={<SaveOutlined />}
+                >
+                  保存
+                </Button>
+                <Button
+                  onClick={() => setShowAddCategory(false)}
+                  icon={<CloseOutlined />}
+                >
+                  取消
+                </Button>
+              </Space.Compact>
+            ) : (
+              <Space.Compact style={{ width: '100%' }}>
+                <Select
+                  style={{ width: '85%' }}
+                  placeholder="请选择分类"
+                  options={getCurrentTypeCategories().map((category) => ({
+                    label: category.name,
+                    value: category._id,
+                  }))}
+                />
+                <Button
+                  onClick={() => setShowAddCategory(true)}
+                  icon={<PlusOutlined />}
+                >
+                  新增
+                </Button>
+              </Space.Compact>
+            )}
           </Form.Item>
 
           <Form.Item
