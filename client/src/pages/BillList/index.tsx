@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { billService, categoryService } from '@/services';
-import { Bill, BillType, Category, Pagination } from '@/services/typings';
+import { Bill, BillType, Category, Pagination } from '@/types/typings';
 import { Line } from '@ant-design/charts';
 import {
   DeleteOutlined,
@@ -364,14 +364,14 @@ const BillList = () => {
                   重置
                 </Button>
                 <Button
-                  type="primary"
+                  type="link"
                   icon={<SearchOutlined />}
                   htmlType="submit"
                 >
                   查询
                 </Button>
                 <Button
-                  type="primary"
+                  type="link"
                   icon={<PlusOutlined />}
                   onClick={goToAddBill}
                 >

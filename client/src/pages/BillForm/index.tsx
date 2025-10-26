@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { billService, categoryService } from '@/services';
-import { BillType, Category } from '@/services/typings';
+import { BillType, Category } from '@/types/typings';
 import {
   CloseOutlined,
   PlusOutlined,

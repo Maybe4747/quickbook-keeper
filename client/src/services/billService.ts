@@ -1,5 +1,5 @@
 import { request } from '@/utils/request';
-import type { Bill, BillType, Pagination, StatsSummary } from './typings';
+import type { Bill, BillType, Pagination, StatsSummary } from '../types/typings';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 

@@ -6,5 +6,5 @@ export { default as userService } from './userService';
 // 导出类型定义
 export * from './billService';
 export * from './categoryService';
-export * from './typings';
+export * from '../types/typings';
 export * from './userService';

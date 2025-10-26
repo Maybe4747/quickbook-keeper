@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { userService } from '@/services';
-import { UserInfo } from '@/services/typings';
+import { UserInfo } from '@/types/typings';
 import { UpdateProfileParams } from '@/services/userService';
 import {
   CloseOutlined,

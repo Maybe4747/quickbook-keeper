@@ -1,5 +1,5 @@
 import { request } from '@/utils/request';
-import type { Category } from './typings';
+import type { Category } from '../types/typings';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 

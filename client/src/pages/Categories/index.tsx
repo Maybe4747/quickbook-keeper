@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { categoryService } from '@/services';
-import { BillType, Category } from '@/services/typings';
+import { BillType, Category } from '@/types/typings';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -165,7 +165,7 @@ const Categories = () => {
       render: (_: any, record: Category) => (
         <Space>
           <Button
-            type="primary"
+            type="link"
             icon={<EditOutlined />}
             size="small"
             onClick={() => handleEdit(record)}
@@ -179,7 +179,7 @@ const Categories = () => {
             cancelText="取消"
           >
             <Button
-              type="primary"
+              type="link"
               danger
               icon={<DeleteOutlined />}
               size="small"
