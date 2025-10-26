@@ -5,40 +5,6 @@ import { history } from '@umijs/max';
 
 // 全局初始化数据配置，用于 Layout 用户信息和权限初始化
 // 更多信息见文档：https://umijs.org/docs/api/runtime-config#getinitialstate
-export async function getInitialState(): Promise<UserInfo> {
-  const token = localStorage.getItem('token');
-  
-  // if (token) {
-  //   // 如果有token，尝试获取用户信息
-  //   try {
-  //     const response = await fetch('/api/users/profile', {
-  //       headers: {
-  //         'Authorization': `Bearer ${token}`,
-  //       },
-  //     });
-      
-  //     if (response.ok) {
-  //       const data = await response.json();
-  //       if (data.code === 0) {
-  //         return {
-  //           _id: data.data._id,
-  //           username: data.data.username,
-  //           token,
-  //           login: true,
-  //         };
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error('获取用户信息失败:', error);
-  //   }
-  // }
-  
-  return {
-    _id: '',
-    username: '',
-    login: false,
-  };
-}
 
 // 运行时路由配置
 export function onRouteChange({ location, routes, action }: any) {

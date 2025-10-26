@@ -27,6 +27,8 @@ import {
 } from 'antd';
 import dayjs from 'dayjs';
 import React, { useEffect, useState } from 'react';
+import { PageSizeOptions, RANGE_PRESETS} from '@/constants';
+import { disabledDate } from '@/utils/date';
 // 引入样式
 import './index.less';
 // 我们将使用标准Date对象格式化日期
@@ -132,7 +134,6 @@ const BillList = () => {
       .flatMap((item) => [
         { date: item.date, type: '收入', value: item.income },
         { date: item.date, type: '支出', value: item.expense },
-        { date: item.date, type: '结余', value: item.income - item.expense },
       ]);
 
     setChartData(chartData);
@@ -289,7 +290,7 @@ const BillList = () => {
       render: (_, record) => (
         <Space size="small">
           <Button
-            type="primary"
+            type="link"
             size="small"
             icon={<EditOutlined />}
             onClick={() => record._id && goToEditBill(record._id)}
@@ -303,7 +304,7 @@ const BillList = () => {
             cancelText="取消"
           >
             <Button
-              type="primary"
+              type="link"
               danger
               size="small"
               icon={<DeleteOutlined />}
@@ -328,7 +329,7 @@ const BillList = () => {
           <Row gutter={16}>
             <Col xs={24} sm={12} md={8} lg={6}>
               <Form.Item name="dateRange" label="日期范围">
-                <RangePicker style={{ width: '100%' }} />
+                <RangePicker  presets={RANGE_PRESETS} disabledDate={disabledDate} style={{ width: '100%' }} />
               </Form.Item>
             </Col>
             <Col xs={24} sm={12} md={8} lg={6}>
@@ -425,6 +426,7 @@ const BillList = () => {
             pageSize: pagination.pageSize,
             total: pagination.total,
             showSizeChanger: true,
+            pageSizeOptions: PageSizeOptions,
             showTotal: (total) => `共 ${total} 条记录`,
             onChange: handlePageChange,
           }}
