@@ -1,7 +1,6 @@
 // @ts-nocheck
-import { userService } from '@/services';
+import { getProfileApi, updateProfileApi, UpdateProfileParams } from '@/services';
 import { UserInfo } from '@/types/typings';
-import { UpdateProfileParams } from '@/services/userService';
 import {
   CloseOutlined,
   EditOutlined,
@@ -47,7 +46,7 @@ const UserProfile = () => {
   const fetchUserProfile = async () => {
     setLoading(true);
     try {
-      const response = await userService.getProfile();
+      const response = await getProfileApi();
       if (response.code === 0) {
         setUser(response.data);
         form.setFieldsValue({
@@ -78,7 +77,7 @@ const UserProfile = () => {
         username: values.username,
       };
 
-      const response = await userService.updateProfile(updateParams);
+      const response = await updateProfileApi(updateParams);
       if (response.code === 0) {
         message.success('用户资料更新成功');
         setUser(response.data);
@@ -108,7 +107,7 @@ const UserProfile = () => {
         password: values.newPassword,
       };
 
-      const response = await userService.updateProfile(updateParams);
+      const response = await updateProfileApi(updateParams);
       if (response.code === 0) {
         message.success('密码修改成功');
         setPasswordModalVisible(false);

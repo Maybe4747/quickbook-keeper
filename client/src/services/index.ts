@@ -1,10 +1,8 @@
-// 统一导出所有服务
-export { default as billService } from './billService';
-export { default as categoryService } from './categoryService';
-export { default as userService } from './userService';
+
+// 导出API函数
+export * from './api/userApi';
+export * from './api/billApi';
+export * from './api/categoryApi';
 
 // 导出类型定义
-export * from './billService';
-export * from './categoryService';
 export * from '../types/typings';
-export * from './userService';

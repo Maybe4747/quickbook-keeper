@@ -1,5 +1,11 @@
 // @ts-nocheck
-import { billService, categoryService } from '@/services';
+import { 
+  getBillByIdApi, 
+  createBillApi, 
+  updateBillApi, 
+  getCategoriesApi, 
+  createCategoryApi 
+} from '@/services';
 import { BillType, Category } from '@/types/typings';
 import {
   CloseOutlined,
@@ -60,7 +66,7 @@ const BillForm = () => {
   // 获取分类列表
   const fetchCategories = async () => {
     try {
-      const response = await categoryService.getCategories();
+      const response = await getCategoriesApi();
       if (response.code === 0) {
         setCategories(response.data);
       } else {
@@ -77,7 +83,7 @@ const BillForm = () => {
   const fetchBillDetail = async (billId: string) => {
     setLoading(true);
     try {
-      const response = await billService.getBillById(billId);
+      const response = await getBillByIdApi(billId);
       if (response.code === 0) {
         const billData = response.data;
         // 设置表单数据
@@ -116,10 +122,10 @@ const BillForm = () => {
       let response;
       if (isEdit && id) {
         // 更新账单
-        response = await billService.updateBill(id, formattedValues);
+        response = await updateBillApi(id, formattedValues);
       } else {
         // 创建账单
-        response = await billService.createBill(formattedValues);
+        response = await createBillApi(formattedValues);
       }
 
       if (response.code === 0) {
@@ -160,7 +166,7 @@ const BillForm = () => {
 
     setAddingCategory(true);
     try {
-      const response = await categoryService.createCategory({
+      const response = await createCategoryApi({
         name: newCategoryName.trim(),
         type: selectedType,
       });

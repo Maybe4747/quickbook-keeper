@@ -1,5 +1,10 @@
 // @ts-nocheck
-import { categoryService } from '@/services';
+import { 
+  getCategoriesApi, 
+  deleteCategoryApi, 
+  createCategoryApi, 
+  updateCategoryApi 
+} from '@/services';
 import { BillType, Category } from '@/types/typings';
 import {
   DeleteOutlined,
@@ -45,7 +50,7 @@ const Categories = () => {
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      const response = await categoryService.getCategories();
+      const response = await getCategoriesApi();
       if (response.code === 0) {
         setCategories(response.data);
       } else {
@@ -84,7 +89,7 @@ const Categories = () => {
   // 处理删除分类
   const handleDelete = async (id: string) => {
     try {
-      const response = await categoryService.deleteCategory(id);
+      const response = await deleteCategoryApi(id);
       if (response.code === 0) {
         message.success('分类删除成功');
         // 重新获取分类列表
@@ -106,9 +111,9 @@ const Categories = () => {
 
       let response;
       if (modalType === 'create') {
-        response = await categoryService.createCategory(values);
+        response = await createCategoryApi(values);
       } else if (modalType === 'edit' && editingCategory) {
-        response = await categoryService.updateCategory(
+        response = await updateCategoryApi(
           editingCategory._id!,
           values,
         );

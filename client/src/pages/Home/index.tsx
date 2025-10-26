@@ -1,6 +1,6 @@
 // @ts-nocheck
-import { billService } from '@/services';
-import { Bill, BillType } from '@/services/typings';
+import { getBillSummaryApi, getRecentBillsApi } from '@/services';
+import { Bill, BillType } from '@/types/typings';
 import {
   AccountBookOutlined,
   ArrowDownOutlined,
@@ -11,6 +11,7 @@ import { PageContainer } from '@ant-design/pro-components';
 import { Alert, Button, Card, Col, Row, Spin, Statistic, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import styles from './index.less';
+import { PageSizeOptions } from '@/constants';
 
 // 为状态变量定义类型
 type SummaryData = {
@@ -39,7 +40,7 @@ const HomePage = () => {
   const fetchSummaryData = async () => {
     setLoading(true);
     try {
-      const response = await billService.getBillSummary();
+      const response = await getBillSummaryApi();
 
       if (response.code === 0) {
         setSummaryData(response.data);
@@ -56,7 +57,7 @@ const HomePage = () => {
   // 获取近期账单
   const fetchRecentBills = async () => {
     try {
-      const response = await billService.getRecentBills(5);
+      const response = await getRecentBillsApi(5);
 
       if (response.code === 0) {
         setRecentBills(response.data);

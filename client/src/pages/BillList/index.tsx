@@ -1,5 +1,9 @@
 // @ts-nocheck
-import { billService, categoryService } from '@/services';
+import { 
+  getBillsApi, 
+  deleteBillApi, 
+  getCategoriesApi 
+} from '@/services';
 import { Bill, BillType, Category, Pagination } from '@/types/typings';
 import { Line } from '@ant-design/charts';
 import {
@@ -65,7 +69,7 @@ const BillList = () => {
   // 获取分类列表
   const fetchCategories = async () => {
     try {
-      const response = await categoryService.getCategories();
+      const response = await getCategoriesApi();
       if (response.code === 0) {
         setCategories(response.data);
       } else {
@@ -86,7 +90,7 @@ const BillList = () => {
         ...filters,
       };
 
-      const response = await billService.getBills(queryParams);
+      const response = await getBillsApi(queryParams);
 
       if (response.code === 0) {
         const billList = response.data.list;
@@ -208,7 +212,7 @@ const BillList = () => {
   // 删除账单
   const handleDeleteBill = async (id: string) => {
     try {
-      const response = await billService.deleteBill(id);
+      const response = await deleteBillApi(id);
 
       if (response.code === 0) {
         message.success('账单删除成功');

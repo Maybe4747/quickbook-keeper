@@ -1,4 +1,4 @@
-import { userService } from '@/services';
+import { loginApi } from '@/services';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { history } from '@umijs/max';
 import { Button, Card, Form, Input, message, Space, Typography } from 'antd';
@@ -19,7 +19,7 @@ export default function Login() {
   const onFinish = async (values: LoginForm) => {
     setLoading(true);
     try {
-      const response = await userService.login(values);
+      const response = await loginApi(values);
 
       if (response.code === 0) {
         // 登录成功

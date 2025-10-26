@@ -1,4 +1,4 @@
-import { userService } from '@/services';
+import { registerApi } from '@/services';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { history } from '@umijs/max';
 import { Button, Card, Form, Input, message, Space, Typography } from 'antd';
@@ -21,7 +21,7 @@ export default function Register() {
     setLoading(true);
     try {
       const { username, password } = values;
-      const response = await userService.register({ username, password });
+      const response = await registerApi({ username, password });
 
       if (response.code === 0) {
         // 注册成功，自动登录
