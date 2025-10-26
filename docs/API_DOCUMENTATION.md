@@ -174,7 +174,7 @@ Authorization: Bearer <token>
           "type": "字符串 (expense/income)"
         },
         "date": "日期字符串",
-        "note": "字符串",
+        "remark": "字符串",
         "createdAt": "日期字符串"
       }
     ],
@@ -208,7 +208,7 @@ Authorization: Bearer <token>
     "type": "字符串 (expense/income)",
     "categoryId": "字符串",
     "date": "日期字符串",
-    "note": "字符串",
+    "remark": "字符串",
     "createdAt": "日期字符串"
   }
 }
@@ -227,7 +227,7 @@ Authorization: Bearer <token>
   "type": "字符串 (必填, expense/income)",
   "categoryId": "字符串 (必填)",
   "date": "日期字符串 (必填)",
-  "note": "字符串 (可选)"
+  "remark": "字符串 (可选)"
 }
 ```
 
@@ -243,7 +243,7 @@ Authorization: Bearer <token>
     "type": "字符串 (expense/income)",
     "categoryId": "字符串",
     "date": "日期字符串",
-    "note": "字符串",
+    "remark": "字符串",
     "createdAt": "日期字符串"
   }
 }
@@ -262,7 +262,7 @@ Authorization: Bearer <token>
   "type": "字符串 (expense/income)",
   "categoryId": "字符串",
   "date": "日期字符串",
-  "note": "字符串"
+  "remark": "字符串"
 }
 ```
 
@@ -278,7 +278,7 @@ Authorization: Bearer <token>
     "type": "字符串 (expense/income)",
     "categoryId": "字符串",
     "date": "日期字符串",
-    "note": "字符串",
+    "remark": "字符串",
     "createdAt": "日期字符串"
   }
 }
@@ -343,7 +343,7 @@ Authorization: Bearer <token>
         "type": "字符串 (expense/income)"
       },
       "date": "日期字符串",
-      "note": "字符串",
+      "remark": "字符串",
       "createdAt": "日期字符串"
     }
   ]
