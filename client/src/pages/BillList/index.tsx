@@ -368,14 +368,14 @@ const BillList = () => {
                   重置
                 </Button>
                 <Button
-                  type="link"
+                  type="primary"
                   icon={<SearchOutlined />}
                   htmlType="submit"
                 >
                   查询
                 </Button>
                 <Button
-                  type="link"
+                  type="primary"
                   icon={<PlusOutlined />}
                   onClick={goToAddBill}
                 >
@@ -425,6 +425,7 @@ const BillList = () => {
           columns={columns}
           dataSource={bills}
           loading={loading}
+          scroll={{ x: 800 }} // 水平滚动，适用于小屏幕
           pagination={{
             current: pagination.current,
             pageSize: pagination.pageSize,

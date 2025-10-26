@@ -1,5 +1,7 @@
 import type { TimeRangePickerProps } from 'antd';
 import dayjs from 'dayjs';
+import 'dayjs/locale/zh-cn';
+   dayjs.locale('zh-cn'); // 设置为中文本地化
 // 日期选择器预设时间范围
 export const RANGE_PRESETS: TimeRangePickerProps['presets'] = [
   { label: '今日', value: [dayjs().startOf('day'), dayjs()] },

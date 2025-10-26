@@ -30,10 +30,16 @@ const getBills = asyncHandler(async (req, res) => {
   if (startDate || endDate) {
     filter.date = {};
     if (startDate) {
-      filter.date.$gte = new Date(startDate);
+      // 将日期字符串转换为当天的开始时间 (00:00:00.000)
+      const start = new Date(startDate);
+      start.setUTCHours(0, 0, 0, 0);
+      filter.date.$gte = start;
     }
     if (endDate) {
-      filter.date.$lte = new Date(endDate);
+      // 将日期字符串转换为当天的结束时间 (23:59:59.999)
+      const end = new Date(endDate);
+      end.setUTCHours(23, 59, 59, 999);
+      filter.date.$lte = end;
     }
   }
 
